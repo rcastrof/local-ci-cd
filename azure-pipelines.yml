@@ -1,19 +1,36 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
 
+# Ejecuta el pipeline cuando se realizan cambios en main.
 trigger:
-- main
+  branches:
+    include:
+      - main
 
+# Utiliza un agente Linux administrado por Azure Pipelines.
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  # Descarga el código del repositorio en el agente.
+  - checkout: self
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  # Instala Node.js 22 para ejecutar la aplicación y sus pruebas.
+  - task: NodeTool@0
+    displayName: 'Install Node.js 22'
+    inputs:
+      versionSpec: '22.x'
+
+  # Instala las dependencias usando el lockfile del proyecto.
+  - script: npm ci
+    displayName: 'Install dependencies'
+    workingDirectory: '$(Build.SourcesDirectory)/app'
+
+  # Ejecuta las pruebas automatizadas definidas en package.json.
+  - script: npm test
+    displayName: 'Run application tests'
+    workingDirectory: '$(Build.SourcesDirectory)/app'
+
+  # Construye la imagen Docker utilizando el Dockerfile de la raíz.
+  # Build.BuildId identifica de forma única esta ejecución del pipeline.
+  - script: docker build -t k8s-api-demo:$(Build.BuildId) .
+    displayName: 'Build Docker image'
+    workingDirectory: '$(Build.SourcesDirectory)'
