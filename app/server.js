@@ -6,13 +6,13 @@ function createServer() {
 
     if (req.url === '/health') {
       res.writeHead(200);
-      return res.end(JSON.stringify({ status: 'healthy' }));
+      return res.end(JSON.stringify({ status: 'sano' }));
     }
 
     if (req.url === '/api') {
       res.writeHead(200);
       return res.end(JSON.stringify({
-        message: 'Hello from Kubernetes!',
+        message: 'Hola desde Kubernetes!',
         application: 'k8s-api-demo',
         version: '1.0.0'
       }));
