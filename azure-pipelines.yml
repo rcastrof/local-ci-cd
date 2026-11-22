@@ -36,3 +36,16 @@ steps:
   - script: npm test
     displayName: 'Run application tests'
     workingDirectory: '$(Build.SourcesDirectory)/app'
+
+ # Construye la imagen Docker y la publica en Azure Container Registry.
+  - task: Docker@2
+    displayName: 'Build and push Docker image'
+    inputs:
+      command: 'buildAndPush'
+      repository: 'k8s-api-demo'
+      dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+      buildContext: '$(Build.SourcesDirectory)'
+      containerRegistry: 'SC-ACR-DEV'
+      tags: |
+        $(Build.BuildId)
+        latest
