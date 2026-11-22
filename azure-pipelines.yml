@@ -49,3 +49,11 @@ steps:
       tags: |
         $(Build.BuildId)
         latest
+
+  # Despliega en Azure App Service la imagen recién publicada.
+  - task: AzureWebAppContainer@1
+    displayName: 'Deploy to Azure App Service'
+    inputs:
+      azureSubscription: 'SC-APP-SERVICE-DEV'
+      appName: 'k8s-api-demo-rodrigo'
+      containers: 'rodrigodevopsregistry.azurecr.io/k8s-api-demo:$(Build.BuildId)'
