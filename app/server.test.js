@@ -38,7 +38,7 @@ test('GET /health responds with healthy status and JSON content type', async () 
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.contentType, 'application/json');
-  assert.deepEqual(response.body, { status: 'healthy' });
+  assert.deepEqual(response.body, { status: 'sano' });
 });
 
 test('GET /api responds with application information', async () => {
@@ -47,7 +47,7 @@ test('GET /api responds with application information', async () => {
   assert.equal(response.statusCode, 200);
   assert.equal(response.contentType, 'application/json');
   assert.deepEqual(response.body, {
-    message: 'Hello from Kubernetes!',
+    message: 'Hola desde Kubernetes!',
     application: 'k8s-api-demo',
     version: '1.0.0'
   });
