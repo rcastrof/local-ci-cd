@@ -13,24 +13,26 @@ steps:
   # Descarga el código del repositorio en el agente.
   - checkout: self
 
-  # Instala Node.js 22 para ejecutar la aplicación y sus pruebas.
+  # Instala y agrega Node.js 22 al PATH del agente.
   - task: UseNode@1
     displayName: 'Install Node.js 22'
     inputs:
-      versionSpec: '22.x'
+      versionSource: 'spec'
+      version: '22.x'
+      checkLatest: false
 
-  # Instala las dependencias usando el lockfile del proyecto.
+  # Comprueba qué versiones quedaron disponibles en el agente.
+  - script: |
+      node --version
+      npm --version
+    displayName: 'Verify Node.js installation'
+
+  # Instala las dependencias usando el lockfile.
   - script: npm ci
     displayName: 'Install dependencies'
     workingDirectory: '$(Build.SourcesDirectory)/app'
 
-  # Ejecuta las pruebas automatizadas definidas en package.json.
+  # Ejecuta las pruebas automatizadas.
   - script: npm test
     displayName: 'Run application tests'
     workingDirectory: '$(Build.SourcesDirectory)/app'
-
-  # Construye la imagen Docker utilizando el Dockerfile de la raíz.
-  # Build.BuildId identifica de forma única esta ejecución del pipeline.
-  - script: docker build -t k8s-api-demo:$(Build.BuildId) .
-    displayName: 'Build Docker image'
-    workingDirectory: '$(Build.SourcesDirectory)'
